@@ -1,12 +1,12 @@
-"""SafeLayer Benchmark & Test Suite
+"""Sentinel Guard Benchmark & Test Suite
 
-Run with:  python -m benchmark.test_suite   (from the safelayer/ root)
+Run with:  python -m benchmark.test_suite   (from the project root)
 
 Covers:
   - Unit tests per layer (L0–L4 + ResponseEngine)
   - End-to-end pipeline tests
   - Adversarial inputs (injection, jailbreak, PII, obfuscation, clean control)
-  - Baseline comparison (naive max-score vs full SafeLayer)
+  - Baseline comparison (naive max-score vs full Sentinel Guard)
   - Metrics: detection rate, false positive rate, per-layer & total latency
   - Outputs benchmark_results.json
 """
@@ -259,7 +259,7 @@ def run_e2e_benchmark():
     print("--- END-TO-END BENCHMARK ---\n")
 
     flagged_cases = []
-    detection_results = []  # (case_id, label, safelayer_flagged, baseline_flagged)
+    detection_results = []  # (case_id, label, sentinel_guard_flagged, baseline_flagged)
     latency_samples = []
     layer_latency_accum: dict[str, list[float]] = {}
 
@@ -277,7 +277,7 @@ def run_e2e_benchmark():
 
         session_risk = state.get("session_risk", 0.0)
         decision = state.get("action", {}).get("decision", "allow")
-        safelayer_flagged = decision not in ("allow",)
+        sentinel_guard_flagged = decision not in ("allow",)
 
         # Baseline
         bstate = run_baseline(sid, msg)
@@ -287,14 +287,14 @@ def run_e2e_benchmark():
             "id": case["id"],
             "label": case["label"],
             "category": case["category"],
-            "safelayer_flagged": safelayer_flagged,
+            "sentinel_guard_flagged": sentinel_guard_flagged,
             "baseline_flagged": baseline_flagged,
             "session_risk": round(session_risk, 4),
             "decision": decision,
             "baseline_risk": round(bstate["baseline_risk"], 4),
         })
 
-        if safelayer_flagged:
+        if sentinel_guard_flagged:
             flagged_cases.append({
                 "id": case["id"],
                 "message": msg[:80],
@@ -305,15 +305,15 @@ def run_e2e_benchmark():
             })
 
         tag = "MAL" if case["label"] == "malicious" else "CLN"
-        flag_icon = "FLAGGED" if safelayer_flagged else "passed"
+        flag_icon = "FLAGGED" if sentinel_guard_flagged else "passed"
         print(f"  [{tag}] {case['id']:10s}  risk={session_risk:.3f}  {decision:25s}  {flag_icon}")
 
     # --- Compute metrics ---
     malicious = [r for r in detection_results if r["label"] == "malicious"]
     clean = [r for r in detection_results if r["label"] == "clean"]
 
-    sl_true_pos = sum(1 for r in malicious if r["safelayer_flagged"])
-    sl_false_pos = sum(1 for r in clean if r["safelayer_flagged"])
+    sl_true_pos = sum(1 for r in malicious if r["sentinel_guard_flagged"])
+    sl_false_pos = sum(1 for r in clean if r["sentinel_guard_flagged"])
     bl_true_pos = sum(1 for r in malicious if r["baseline_flagged"])
     bl_false_pos = sum(1 for r in clean if r["baseline_flagged"])
 
@@ -330,7 +330,7 @@ def run_e2e_benchmark():
         per_layer_avg[lname] = round(sum(samples) / len(samples), 2)
 
     metrics = {
-        "safelayer": {
+        "sentinel_guard": {
             "detection_rate_pct": round(sl_detection_rate, 1),
             "false_positive_rate_pct": round(sl_fp_rate, 1),
             "true_positives": sl_true_pos,
@@ -402,7 +402,7 @@ def main():
     overall_start = time.perf_counter()
 
     print("=" * 60)
-    print("         SAFELAYER BENCHMARK & TEST SUITE")
+    print("      SENTINEL GUARD BENCHMARK & TEST SUITE")
     print("=" * 60)
 
     # 1. Unit tests
@@ -431,12 +431,12 @@ def main():
 
     # 5. Final report
     m = metrics
-    sl = m["safelayer"]
+    sl = m["sentinel_guard"]
     bl = m["baseline"]
 
     print()
     print("=" * 60)
-    print("            SAFELAYER BENCHMARK REPORT")
+    print("         SENTINEL GUARD BENCHMARK REPORT")
     print("=" * 60)
     print(f"  Unit Tests:              {unit_passed}/{unit_total} passed")
     print(f"  Detection Rate:          {sl['detection_rate_pct']}%  ({sl['true_positives']}/{sl['total_malicious']})")

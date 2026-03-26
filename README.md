@@ -1,4 +1,4 @@
-# SafeLayer — Multi-Layer Guardrails for LLMs
+# Sentinel Guard — Multi-Layer Guardrails for LLMs
 
 > A 5-layer pipeline that detects, correlates, and mitigates LLM attacks across entire sessions.
 
@@ -22,13 +22,13 @@ Most LLM guardrails fail in practice because they:
 - **Lack explainability** — when something is blocked, there is no clear reasoning why
 - **Have no session memory** — risk resets every turn, so gradual escalation goes undetected
 
-SafeLayer addresses all five.
+Sentinel Guard addresses all five.
 
 ---
 
 ## Solution Overview
 
-SafeLayer is a **multi-layer safety pipeline** where each layer enriches a shared context before passing it downstream:
+Sentinel Guard is a **multi-layer safety pipeline** where each layer enriches a shared context before passing it downstream:
 
 | Layer | Name | What It Does |
 |-------|------|--------------|
@@ -39,7 +39,7 @@ SafeLayer is a **multi-layer safety pipeline** where each layer enriches a share
 | **L4** | Explainability | Generates a human-readable explanation of why the score is what it is |
 | **RE** | Response Engine | Maps the final risk to a graduated action: allow → monitor → warn → block → reset |
 
-SafeLayer reasons about **intent across time**, not just individual messages. A single benign-looking message may be harmless, but a sequence of probing messages will trigger escalating defenses.
+Sentinel Guard reasons about **intent across time**, not just individual messages. A single benign-looking message may be harmless, but a sequence of probing messages will trigger escalating defenses.
 
 ---
 
@@ -174,7 +174,7 @@ This will:
 
 - Simulate adversarial attacks (injection, jailbreak, PII, obfuscation)
 - Run clean control inputs to measure false positives
-- Compare SafeLayer against a naive max-score baseline
+- Compare Sentinel Guard against a naive max-score baseline
 - Print detection rates, false positive rates, and per-layer latency
 - Output results to `benchmark_results.json`
 
@@ -245,11 +245,11 @@ LLM-guardrail/
 
 ## Production-Grade Upgrades
 
-SafeLayer is designed to be **embedded directly into LLM application stacks** — sitting between user input and the language model as inline middleware. Moving from prototype to production requires the following upgrades:
+Sentinel Guard is designed to be **embedded directly into LLM application stacks** — sitting between user input and the language model as inline middleware. Moving from prototype to production requires the following upgrades:
 
 ### Integration & Embedding
 
-- **Python SDK / middleware library** — package SafeLayer as a `pip install`-able library so any LLM app can add `safelayer.analyze(message)` in one line
+- **Python SDK / middleware library** — package Sentinel Guard as a `pip install`-able library so any LLM app can add `sentinel_guard.analyze(message)` in one line
 - **LLM framework hooks** — native integrations with LangChain, LlamaIndex, and Haystack as pre-processing guards
 - **Pre-inference gate** — embed before the LLM call; block or modify the prompt before tokens are generated
 - **Post-inference gate** — add an output scanning layer to catch unsafe LLM responses before delivery
@@ -273,7 +273,7 @@ SafeLayer is designed to be **embedded directly into LLM application stacks** �
 
 - **Audit logging** — write every analysis decision to a durable, tamper-proof log for compliance
 - **Policy-as-code** — let teams define custom threat thresholds and response actions in config files
-- **Data residency** — ensure user messages processed by SafeLayer respect regional data regulations
+- **Data residency** — ensure user messages processed by Sentinel Guard respect regional data regulations
 - **Zero data retention mode** — option to analyze without persisting any user content
 
 ### Observability
@@ -281,13 +281,13 @@ SafeLayer is designed to be **embedded directly into LLM application stacks** �
 - **Structured logging** — JSON logs with request IDs, layer timings, and risk scores at every stage
 - **Metrics export** — Prometheus-compatible metrics for latency percentiles, threat distribution, and block rates
 - **Alerting** — trigger alerts when session risk exceeds thresholds or false-positive rates spike
-- **OpenTelemetry tracing** — end-to-end spans from user input through SafeLayer through LLM inference
+- **OpenTelemetry tracing** — end-to-end spans from user input through Sentinel Guard through LLM inference
 
 ### Testing & Reliability
 
 - **Adversarial red-teaming** — scheduled runs against evolving attack corpora (HarmBench, JailbreakBench)
 - **Regression suite** — ensure new model versions don't degrade detection on known attack patterns
-- **Graceful degradation** — if SafeLayer fails, the LLM should still respond (fail-open with logging, or fail-closed per policy)
+- **Graceful degradation** — if Sentinel Guard fails, the LLM should still respond (fail-open with logging, or fail-closed per policy)
 - **Canary rollouts** — roll out classifier updates to a subset of traffic before full deployment
 
 ---

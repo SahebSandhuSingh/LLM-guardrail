@@ -17,7 +17,7 @@ from pipeline import (
 )
 
 app = FastAPI(
-    title="SafeLayer",
+    title="Sentinel Guard",
     description="Multi-layer AI safety analysis pipeline",
     version="0.1.0",
 )

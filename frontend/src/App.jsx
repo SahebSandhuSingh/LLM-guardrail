@@ -71,7 +71,7 @@ export default function App() {
 
   return (
     <div className="app">
-      <h1>🛡️ SafeLayer Demo</h1>
+      <h1>🛡️ Sentinel Guard Demo</h1>
 
       {/* ---------- Input Panel ---------- */}
       <div className="input-panel">
