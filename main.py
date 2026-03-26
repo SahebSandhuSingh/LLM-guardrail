@@ -5,6 +5,7 @@ import os
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from models.schemas import AnalyzeRequest
 from pipeline import (
     Layer0Normalizer,
@@ -19,6 +20,13 @@ app = FastAPI(
     title="SafeLayer",
     description="Multi-layer AI safety analysis pipeline",
     version="0.1.0",
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 # Instantiate pipeline layers once at startup
