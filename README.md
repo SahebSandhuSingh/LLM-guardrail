@@ -4,6 +4,14 @@
 
 ---
 
+## Inspirations
+
+- **"R2-Guard"** (ICLR 2025) — Instead of pure data-driven classifiers, R2-Guard encodes safety knowledge into Probabilistic Graphical Models (PGMs) and performs logical inference via Markov Logic Networks or Probabilistic Circuits, making the guardrail more robust to jailbreaks and able to capture correlations between safety categories.
+
+- **"Bypassing LLM Guardrails: An Empirical Analysis of Evasion Attacks"** (ACL 2025) — Demonstrates that prompt injection and jailbreak guardrails can be fully evaded using character injection techniques and imperceptible adversarial ML attacks, while keeping the malicious prompt fully functional for the underlying LLM.
+
+---
+
 ## Problem Statement
 
 Most LLM guardrails fail in practice because they:
@@ -222,7 +230,6 @@ LLM-guardrail/
 - Prototype built in **~3 days**
 - **In-memory** session tracking (no database)
 - Lightweight models — zero-shot NLI, no fine-tuning required
-- Designed for **demo and evaluation**, not production deployment
 
 ---
 
